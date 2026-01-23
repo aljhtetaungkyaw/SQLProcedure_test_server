@@ -1,0 +1,14 @@
+FROM mysql:8.0
+
+# cron インストール
+RUN microdnf install -y cronie \
+ && microdnf clean all
+
+# batch をコピー
+COPY batch /batch
+
+# cron 登録
+COPY batch/crontab/cron /etc/cron.d/batch
+RUN chmod 0644 /etc/cron.d/batch
+
+CMD ["crond", "-n"]

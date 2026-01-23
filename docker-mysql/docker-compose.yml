@@ -1,0 +1,32 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql8
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_BATCH_USER}
+      MYSQL_PASSWORD: ${MYSQL_BATCH_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./mysql/db/init:/docker-entrypoint-initdb.d
+      - mysql_data:/var/lib/mysql
+
+  batch:
+    build: .
+    container_name: mysql_batch
+    depends_on:
+      - mysql
+    env_file:
+      - .env
+    volumes:
+      - ./batch:/batch
+      - ./.env:/batch/.env
+    command: ["crond", "-n"]
+
+volumes:
+  mysql_data:

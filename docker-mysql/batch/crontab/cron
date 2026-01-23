@@ -1,0 +1,7 @@
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# 毎分実行する
+# * * * * * root /batch/crontab/01min.sh
+# 5分毎に実行する
+# */5 * * * * root /batch/crontab/05min.sh
