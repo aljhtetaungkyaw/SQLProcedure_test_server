@@ -50,3 +50,8 @@ SHOW PROCEDURE STATUS LIKE 'sp_get_salary_list_by_month';
 
 #シェルスクリプト（shell Script）を新規追加ファイルをやるべきこと（windowであればバッチ「.bat」ファイルと似ている）
 chmod +x ファイル名.sh
+
+crontab/cronファイルを修正後以下のコメントを実行
+$ docker composer down
+$ docker composer build
+$ docker compose up -d
