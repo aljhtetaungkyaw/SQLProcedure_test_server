@@ -17,15 +17,16 @@ docker-mysql/
    ├─ my.cnf                          # MySQL 設定ファイル: 文字セット (utf8mb4) とコレーションを設定
    └─ db/
       └─ init/
-         ├─ world.sql                        # DB初期化スクリプト
-         ├─ sp_add_transportation_cost.sql   # ストアドプロシージャ: 交通費記録を追加
-         ├─ sp_get_monthly_payment.sql       # ストアドプロシージャ: 指定ユーザーの月次給与情報を取得
-         └─ sp_get_salary_list_by_month.sql  # ストアドプロシージャ: 全ユーザーの月次給与を集計・税額計算
+         ├─ 01_world.sql                        # DB初期化スクリプト
+         ├─ 02_sp_add_transportation_cost.sql   # ストアドプロシージャ: 交通費記録を追加
+         ├─ 03_sp_get_monthly_payment.sql       # ストアドプロシージャ: 指定ユーザーの月次給与情報を取得
+         └─ 04_sp_get_salary_list_by_month.sql  # ストアドプロシージャ: 全ユーザーの月次給与を集計・税額計算
 --------------------------------------------------------------------------
 #パスまで移動
 cd docker-mysql/
 
 # コンテナの作成
+$ docker composer build
 $ docker compose up -d
 
 # 起動したコンテナにログイン
