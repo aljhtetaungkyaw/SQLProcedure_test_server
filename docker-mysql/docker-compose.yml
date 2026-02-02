@@ -1,32 +1,57 @@
 services:
+
+  # MySQL サービスの定義
   mysql:
+    # 使用する Docker イメージ（MySQL 8.0）
     image: mysql:8.0
+    # コンテナの名前を指定
     container_name: mysql8
+    # 環境変数を読み込む .env ファイルのパス
     env_file:
       - .env
+    # 環境変数の設定（.env から読み込み）
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_BATCH_USER}
       MYSQL_PASSWORD: ${MYSQL_BATCH_PASSWORD}
+    # ポートマッピング：ホストの 3306 ポートをコンテナの 3306 ポートに接続
     ports:
       - "3306:3306"
+    # ボリュームの設定
     volumes:
+      # MySQL の設定ファイルをマウント（my.cnf をカスタマイズ可能）
       - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      # 初期化スクリプトをマウント（コンテナ起動時に実行される）
       - ./mysql/db/init:/docker-entrypoint-initdb.d
+      # データの永続化用ボリューム（MySQL のデータを保存）
       - mysql_data:/var/lib/mysql
 
+  # バッチ処理用のサービス
   batch:
+    # ビルドの設定（現在のディレクトリの Dockerfile を使用）
     build: .
+    # コンテナの名前を指定
     container_name: mysql_batch
+    #「batch サービスは、mysql サービスが起動してから起動する」
     depends_on:
       - mysql
+      # mysql が健康状態（接続可能）になるまで待つ
+      #mysql:
+      #condition: service_healthy
+    # 環境変数を読み込む .env ファイルのパス
     env_file:
       - .env
+    # ボリュームの設定
     volumes:
+      # バッチ処理用のコードをマウント
       - ./batch:/batch
+       # .env ファイルをバッチコンテナ内にもマウント（環境変数の利用）
       - ./.env:/batch/.env
+    # コンテナの起動コマンド（cron をバックグラウンドで実行）
     command: ["crond", "-n"]
 
+# ボリュームの定義
 volumes:
+  # MySQL のデータ永続化用ボリューム
   mysql_data:
