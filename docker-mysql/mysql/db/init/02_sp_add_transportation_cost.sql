@@ -1,3 +1,4 @@
+SET NAMES utf8mb4;
 DROP PROCEDURE IF EXISTS sp_add_transportation_cost;
 
 DELIMITER //

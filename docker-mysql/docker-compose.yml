@@ -51,6 +51,18 @@ services:
     # コンテナの起動コマンド（cron をバックグラウンドで実行）
     command: ["crond", "-n"]
 
+  # phpMyAdmin サービスの追加
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    depends_on:
+      - mysql
+
 # ボリュームの定義
 volumes:
   # MySQL のデータ永続化用ボリューム

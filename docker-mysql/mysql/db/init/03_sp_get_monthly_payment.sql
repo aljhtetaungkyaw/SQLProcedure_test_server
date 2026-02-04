@@ -1,3 +1,4 @@
+SET NAMES utf8mb4;
 DROP PROCEDURE IF EXISTS sp_get_monthly_payment;
 
 DELIMITER //

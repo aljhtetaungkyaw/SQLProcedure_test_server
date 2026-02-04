@@ -1,3 +1,4 @@
+SET NAMES utf8mb4;
 DROP PROCEDURE IF EXISTS sp_get_salary_list_by_month;
 
 -- プロシージャ内の複数のセミコロンを含めるため、ステートメント終端を // に変更
