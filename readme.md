@@ -101,7 +101,7 @@ chmod +x <ファイル名>.sh
 
 ```bash
 # コンテナ停止と削除
-docker compose down
+docker compose down -v
 
 # 再ビルドと起動
 docker compose build
