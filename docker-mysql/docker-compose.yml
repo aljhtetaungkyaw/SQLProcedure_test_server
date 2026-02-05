@@ -1,69 +1,46 @@
 services:
 
-  # MySQL サービスの定義
-  mysql:
-    # 使用する Docker イメージ（MySQL 8.0）
-    image: mysql:8.0
-    # コンテナの名前を指定
-    container_name: mysql8
-    # 環境変数を読み込む .env ファイルのパス
-    env_file:
+  mysql: # MySQL サービスの定義
+    image: mysql:8.0 # 使用する Docker イメージ（MySQL 8.0）
+    container_name: mysql8 # コンテナの名前を指定
+    env_file: # 環境変数を読み込む .env ファイルのパス
       - .env
-    # 環境変数の設定（.env から読み込み）
-    environment:
+    environment: # 環境変数の設定（.env から読み込み）
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_BATCH_USER}
       MYSQL_PASSWORD: ${MYSQL_BATCH_PASSWORD}
-    # ポートマッピング：ホストの 3306 ポートをコンテナの 3306 ポートに接続
-    ports:
+    ports: # ポートマッピング：ホストの 3306 ポートをコンテナの 3306 ポートに接続
       - "3306:3306"
-    # ボリュームの設定
-    volumes:
-      # MySQL の設定ファイルをマウント（my.cnf をカスタマイズ可能）
-      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
-      # 初期化スクリプトをマウント（コンテナ起動時に実行される）
-      - ./mysql/db/init:/docker-entrypoint-initdb.d
-      # データの永続化用ボリューム（MySQL のデータを保存）
-      - mysql_data:/var/lib/mysql
+    volumes: # ボリュームの設定
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf # MySQL の設定ファイルをマウント（my.cnf をカスタマイズ可能）
+      - ./mysql/db/init:/docker-entrypoint-initdb.d # 初期化スクリプトをマウント（コンテナ起動時に実行される）
+      - mysql_data:/var/lib/mysql # データの永続化用ボリューム（MySQL のデータを保存）
 
-  # バッチ処理用のサービス
-  batch:
-    # ビルドの設定（現在のディレクトリの Dockerfile を使用）
-    build: .
-    # コンテナの名前を指定
-    container_name: mysql_batch
-    #「batch サービスは、mysql サービスが起動してから起動する」
-    depends_on:
-      - mysql
-      # mysql が健康状態（接続可能）になるまで待つ
+  batch: # バッチ処理用のサービス
+    build: . # ビルドの設定（現在のディレクトリの Dockerfile を使用）
+    container_name: mysql_batch # コンテナの名前を指定
+    depends_on: #「batch サービスは、mysql サービスが起動してから起動する」
+      - mysql # mysql が健康状態（接続可能）になるまで待つ
       #mysql:
       #condition: service_healthy
-    # 環境変数を読み込む .env ファイルのパス
-    env_file:
+    env_file: # 環境変数を読み込む .env ファイルのパス
       - .env
-    # ボリュームの設定
-    volumes:
-      # バッチ処理用のコードをマウント
-      - ./batch:/batch
-      # .env ファイルをバッチコンテナ内にもマウント（環境変数の利用）
-      - ./.env:/batch/.env
-    # コンテナの起動コマンド（cron をバックグラウンドで実行）
-    command: ["crond", "-n"]
+    volumes: # ボリュームの設定
+      - ./batch:/batch # バッチ処理用のコードをマウント
+      - ./.env:/batch/.env # .env ファイルをバッチコンテナ内にもマウント（環境変数の利用）
+    command: ["crond", "-n"] # コンテナの起動コマンド（cron をバックグラウンドで実行）
 
-  # phpMyAdmin サービスの追加
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    container_name: phpmyadmin
-    ports:
+  phpmyadmin: # phpMyAdmin サービスの追加
+    image: phpmyadmin/phpmyadmin:latest # 使用する Docker イメージ（phpmyadmin）
+    container_name: phpmyadmin # コンテナの名前を指定
+    ports: # ポートマッピング：ホストの 8080 ポートをコンテナの 80 ポートに接続
       - "8080:80"
-    environment:
+    environment: # 環境変数の設定（MySQL サーバーのホスト名とポートを指定）
       PMA_HOST: mysql
       PMA_PORT: 3306
-    depends_on:
+    depends_on: # mysql サービスに依存
       - mysql
 
-# ボリュームの定義
-volumes:
-  # MySQL のデータ永続化用ボリューム
-  mysql_data:
+volumes: # ボリュームの定義
+  mysql_data: # MySQL のデータ永続化用ボリューム
