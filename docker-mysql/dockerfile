@@ -1,14 +1,14 @@
 FROM mysql:8.0
 
-# cron インストール
-RUN microdnf install -y cronie \
+# cron関連のインストールを削除し、必要なユーティリティのみ残す
+RUN microdnf install -y ncurses \
  && microdnf clean all
 
-# batch をコピー
+# batch フォルダのコピー
 COPY batch /batch
 
-# cron 登録
-COPY batch/crontab/cron /etc/cron.d/batch
-RUN chmod 0644 /etc/cron.d/batch
+# 実行権限の付与（念のため）
+RUN chmod +x /batch/*.sh
 
-CMD ["crond", "-n"]
+# batchコンテナ自体は常駐させるだけにする（dkronから叩かれるため）
+CMD ["tail", "-f", "/dev/null"]
