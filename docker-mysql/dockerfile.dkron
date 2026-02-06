@@ -1,0 +1,9 @@
+# Dockerfile.dkron
+FROM dkron/dkron:latest
+
+# rootユーザーでdockerコマンドをインストール
+USER root
+RUN apk add --no-cache docker-cli
+
+# dkronユーザーに戻す（セキュリティのため）
+# ただし、/var/run/docker.sock の権限が root の場合は root のままにする必要があります

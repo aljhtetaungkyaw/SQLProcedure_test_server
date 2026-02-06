@@ -108,6 +108,13 @@ docker compose build
 docker compose up -d
 
 ```
+### Dkronにジョブ追加
+UIからジョブを作成する際、以下のように設定してください。
+- Name: run-01min-batch (任意)
+- Timezone: Asia/Tokyo
+- Schedule: @every 1m
+- Executor: shell
+- Executor config: "command":"docker exec mysql_batch /bin/sh /batch/crontab/01min.sh"
 
 ---
 

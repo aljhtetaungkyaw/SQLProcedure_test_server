@@ -29,7 +29,7 @@ services:
     volumes: # ボリュームの設定
       - ./batch:/batch # バッチ処理用のコードをマウント
       - ./.env:/batch/.env # .env ファイルをバッチコンテナ内にもマウント（環境変数の利用）
-    command: ["crond", "-n"] # コンテナの起動コマンド（cron をバックグラウンドで実行）
+    command: ["tail", "-f", "/dev/null"]
 
   phpmyadmin: # phpMyAdmin サービスの追加
     image: phpmyadmin/phpmyadmin:latest # 使用する Docker イメージ（phpmyadmin）
@@ -42,5 +42,22 @@ services:
     depends_on: # mysql サービスに依存
       - mysql
 
+# --- dkron サービスの追加 ---
+  dkron:
+    build:
+      context: .
+      dockerfile: dockerfile.dkron
+    container_name: dkron
+    command: agent --server --bootstrap-expect=1 --node-name=node1
+    ports:
+      - "8000:8080"
+    volumes:
+      - dkron_data:/dkron/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    user: root
+    depends_on:
+      - batch
+
 volumes: # ボリュームの定義
   mysql_data: # MySQL のデータ永続化用ボリューム
+  dkron_data: # Dkron のデータ永続化用ボリューム
